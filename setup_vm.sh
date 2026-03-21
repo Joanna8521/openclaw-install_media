@@ -33,7 +33,7 @@ cat << 'BANNER'
   ╔═══════════════════════════════════════════╗
   ║                                           ║
   ║     🦞  OpenClaw VM 一鍵建立程式          ║
-  ║         酒Ann × OpenClaw_media 課程         ║
+  ║         酒Ann × OpenClaw_media 課程        ║
   ║         自媒體班                      ║
   ║                                           ║
   ╚═══════════════════════════════════════════╝
@@ -277,7 +277,7 @@ echo -e "  ${BOLD}第一步：SSH 連入 VM${RESET}"
 echo ""
 echo -e "  ${CYAN}ssh -i $SSH_KEY_PATH ubuntu@$PUBLIC_IP${RESET}"
 echo ""
-echo -e "  ${BOLD}第二步：進入 VM 後執行安裝腳本${RESET}"
+echo -e "  ${BOLD}第二步：進入 VM 後執行安裝腳本${RESET}  ⚠️  請用下面指令（不可用 curl | bash）"
 echo ""
 echo -e "  ${CYAN}curl -fsSL https://raw.githubusercontent.com/Joanna8521/openclaw-install_media/main/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh && sudo ./bootstrap.sh${RESET}"
 echo ""
