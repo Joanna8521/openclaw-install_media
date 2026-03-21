@@ -121,15 +121,15 @@ print_info "初始化設定檔..."
 node "$INSTALL_DIR/openclaw.mjs" setup 2>/dev/null || true
 node "$INSTALL_DIR/openclaw.mjs" config set gateway.mode local 2>/dev/null || true
 
-# 設定技能目錄（讓龍蝦讀到製造業班的 SKILL.md）
+# 設定技能目錄（讓龍蝦讀到自媒體班的 SKILL.md）
 node "$INSTALL_DIR/openclaw.mjs" config set skills.load.extraDirs '[
   "/root/.openclaw/skills"
 ]' 2>/dev/null || true
 
 print_ok "OpenClaw 設定初始化完成"
 
-# ── STEP 6：安裝製造業班 Skills ───────────────────────────────────────────────
-section "STEP 6｜安裝製造業班 Skills"
+# ── STEP 6：安裝自媒體班 Skills ───────────────────────────────────────────────
+section "STEP 6｜安裝自媒體班 Skills"
 
 SKILLS_DIR="/root/.openclaw/skills"
 mkdir -p "$SKILLS_DIR"
