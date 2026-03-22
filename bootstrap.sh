@@ -66,44 +66,24 @@ echo ""
 echo "  選擇 AI 引擎："
 echo "  1) Claude（Anthropic）  — 推薦，繁中支援最好"
 echo "  2) Gemini（Google）     — 免費額度較多"
-echo "  3) OpenAI（GPT-4o）     — 相容性最廣"
-echo "  4) DeepSeek             — 成本最低"
-echo "  5) MiniMax"
-echo "  6) Kimi（Moonshot AI）"
 echo ""
-read -r -p "  請輸入選項 [1-6，預設 1]：" AI_CHOICE
+read -r -p "  請輸入選項 [1/2，預設 1]：" AI_CHOICE
 echo ""
 
 case "${AI_CHOICE:-1}" in
   2)
     AI_PROVIDER="google"
     AI_MODEL="google/gemini-2.5-pro"
+    AI_ENV_VAR="GOOGLE_API_KEY"
     AI_LABEL="Gemini API Key（aistudio.google.com 取得）"
-    ;;
-  3)
-    AI_PROVIDER="openai"
-    AI_MODEL="openai/gpt-4o"
-    AI_LABEL="OpenAI API Key（platform.openai.com 取得）"
-    ;;
-  4)
-    AI_PROVIDER="deepseek"
-    AI_MODEL="deepseek/deepseek-chat"
-    AI_LABEL="DeepSeek API Key（platform.deepseek.com 取得）"
-    ;;
-  5)
-    AI_PROVIDER="minimax"
-    AI_MODEL="minimax/MiniMax-Text-01"
-    AI_LABEL="MiniMax API Key"
-    ;;
-  6)
-    AI_PROVIDER="moonshot"
-    AI_MODEL="moonshot/moonshot-v1-8k"
-    AI_LABEL="Kimi API Key（platform.moonshot.cn 取得）"
+    AI_EXTRA_CONFIG=""
     ;;
   *)
     AI_PROVIDER="anthropic"
     AI_MODEL="anthropic/claude-sonnet-4-6"
+    AI_ENV_VAR="ANTHROPIC_API_KEY"
     AI_LABEL="Claude API Key（console.anthropic.com 取得）"
+    AI_EXTRA_CONFIG=""
     ;;
 esac
 
@@ -222,17 +202,38 @@ node "$INSTALL_DIR/openclaw.mjs" config set gateway.port 18789 2>/dev/null || tr
 # Skills 目錄（自媒體班 flat 結構）
 node "$INSTALL_DIR/openclaw.mjs" config set skills.load.extraDirs '["/root/.openclaw/skills"]' 2>/dev/null || true
 
-# ── AI 引擎設定（正確路徑）───────────────────────────────────────────────────
+# ── AI 引擎設定（環境變數 + paste-token 雙保險）────────────────────────────
 if [ -n "$AI_KEY" ]; then
-  # 設定 model
+  # 1. 寫入 ~/.openclaw/.env（openclaw 自動載入）
+  OPENCLAW_ENV_FILE="/root/.openclaw/.env"
+  touch "$OPENCLAW_ENV_FILE"
+  # 移除舊的同名 key，再追加新的
+  grep -v "^${AI_ENV_VAR}=" "$OPENCLAW_ENV_FILE" > "${OPENCLAW_ENV_FILE}.tmp" 2>/dev/null || true
+  echo "${AI_ENV_VAR}=${AI_KEY}" >> "${OPENCLAW_ENV_FILE}.tmp"
+  mv "${OPENCLAW_ENV_FILE}.tmp" "$OPENCLAW_ENV_FILE"
+  chmod 600 "$OPENCLAW_ENV_FILE"
+
+  # 2. 設定 model
   node "$INSTALL_DIR/openclaw.mjs" config set agents.defaults.model.primary "$AI_MODEL" 2>/dev/null || true
 
-  # 設定 auth profile
-  AUTH_JSON="{\"default\":{\"provider\":\"${AI_PROVIDER}\",\"apiKey\":\"${AI_KEY}\"}}"
-  node "$INSTALL_DIR/openclaw.mjs" config set agents.defaults.auth.profiles "$AUTH_JSON" 2>/dev/null || true
+  # 3. Anthropic 還需要 paste-token（其他 provider 靠環境變數就夠）
+  if [ "$AI_PROVIDER" = "anthropic" ]; then
+    echo "$AI_KEY" | node "$INSTALL_DIR/openclaw.mjs" models auth paste-token \
+      --provider anthropic 2>/dev/null || true
+  fi
+
+  # 4. DeepSeek / MiniMax / Kimi 需要寫 custom provider 設定
+  if [ -n "$AI_EXTRA_CONFIG" ]; then
+    # 把 custom provider 的 env var 也寫入 .env
+    # AI_EXTRA_CONFIG 只用來記錄需要 custom provider，實際設定靠 .env
+    print_info "Custom provider（${AI_PROVIDER}）設定完成（透過環境變數）"
+  fi
+
   print_ok "AI 引擎設定完成（${AI_PROVIDER} / ${AI_MODEL}）"
 else
-  print_warn "API Key 未設定，稍後手動執行：sudo node $INSTALL_DIR/openclaw.mjs config --section agents"
+  print_warn "API Key 未設定，稍後手動執行："
+  print_warn "  Anthropic: sudo node $INSTALL_DIR/openclaw.mjs models auth paste-token --provider anthropic"
+  print_warn "  其他:      echo 'API_KEY_VAR=你的Key' >> /root/.openclaw/.env"
 fi
 
 # ── Telegram 設定 ────────────────────────────────────────────────────────────
