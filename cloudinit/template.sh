@@ -1,7 +1,7 @@
 #!/bin/bash
 # =============================================================================
-#  🦞 OpenClaw 自媒體班 — 全自動安裝腳本
-#  cloud-init user-data 版（貼到建立 VM 時的 User data 欄位）
+#  🦞 OpenClaw 自媒體班 — Hetzner 全自動安裝腳本
+#  cloud-init user-data 版（貼到 Hetzner 建立 VM 時的 User data 欄位）
 #
 #  Repos:
 #    主程式安裝腳本（Public）: Joanna8521/openclaw-install_media
@@ -10,15 +10,14 @@
 #  ★ 安裝前請先把下面五個欄位換成你自己的值 ★
 # =============================================================================
 
-# ── 請填入你的設定（只需改這五行）────────────────────────────────────────────
-LINE_TOKEN="請把這裡換成你的LINE_Channel_Access_Token"
-TG_TOKEN=""                  # Telegram Bot Token（選填，有的話填進來）
-AI_KEY="請把這裡換成你的Claude_或Gemini_API_Key"
-AI_ENGINE="claude"           # claude 或 gemini 二選一
-NGROK_TOKEN="請把這裡換成你的ngrok_Auth_Token"
-NGROK_DOMAIN="請把這裡換成你的ngrok靜態網域"  # 例如：profound-frank-kangaroo.ngrok-free.app
-SKILLS_PAT="請把這裡換成老師給的Skills存取碼"
-# ─────────────────────────────────────────────────────────────────────────────
+# 從環境變數讀取（由 User Data 的前幾行 export 進來）
+LINE_TOKEN="${LINE_TOKEN:-}"
+TG_TOKEN="${TG_TOKEN:-}"
+AI_KEY="${AI_KEY:-}"
+AI_ENGINE="${AI_ENGINE:-claude}"
+NGROK_TOKEN="${NGROK_TOKEN:-}"
+NGROK_DOMAIN="${NGROK_DOMAIN:-}"
+SKILLS_PAT="${SKILLS_PAT:-}"
 
 set -euo pipefail
 exec > /var/log/openclaw-install.log 2>&1
@@ -56,7 +55,7 @@ After=network.target openclaw.service
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/local/bin/ngrok http --log=stdout 18789
+ExecStart=/usr/local/bin/ngrok http --log=stdout --url=${NGROK_DOMAIN} 18789
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
