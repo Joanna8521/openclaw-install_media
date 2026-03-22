@@ -70,7 +70,7 @@ echo "  Oracle Cloud 是零成本的首選方案。"
 echo "  如果 Oracle 申請不過，再使用 GCP 備案。"
 echo ""
 echo "  替代考量："
-echo "  Hetzner Cloud CX22（新加坡）2 vCPU / 4GB / NT$140/月"
+echo '  Hetzner Cloud CX22（新加坡）2 vCPU / 4GB / NT$140/月'
 echo "  → 比 GCP 便宜 5 倍，申請也更簡單（信用卡即可）"
 echo ""
 read -rp "  確認要繼續用 GCP 建立 VM？[y/N] " confirm
@@ -262,7 +262,7 @@ echo ""
 echo "  ── ⚠️  費用提醒 ──────────────────────────────"
 echo '  GCP VM 費用：約 NT\$700–900 / 月'
 echo "  如不使用時，可在 GCP Console 停止 VM 暫停計費"
-echo "  （停止後不計 CPU/RAM 費用，只計磁碟費用約 NT$30/月）"
+echo '  （停止後不計 CPU/RAM 費用，只計磁碟費用約 NT$30/月）'
 echo ""
 echo "  ── LINE Webhook 設定 ────────────────────────"
 echo "  Webhook URL：http://$PUBLIC_IP/line/webhook"
