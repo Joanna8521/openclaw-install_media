@@ -64,7 +64,7 @@ echo -e "${NC}"
 echo "  ⚠️  費用提醒："
 echo "  GCP 沒有永久免費的足夠規格。"
 echo "  本腳本建立 e2-medium（2 vCPU / 4GB RAM / 台灣區）"
-echo "  費用約 NT$700–900 / 月（不含流量）"
+echo '  費用約 NT\$700–900 / 月（不含流量）'
 echo ""
 echo "  Oracle Cloud 是零成本的首選方案。"
 echo "  如果 Oracle 申請不過，再使用 GCP 備案。"
@@ -126,8 +126,8 @@ ok "Compute Engine API 已啟用"
 section "STEP 3｜選擇區域"
 
 echo "  建議區域："
-echo "  1) asia-east1-b     台灣（延遲最低，約 NT$750/月）"
-echo "  2) asia-southeast1-b 新加坡（費用略低，約 NT$680/月）"
+echo '  1) asia-east1-b     台灣（延遲最低，約 NT\$750/月）'
+echo '  2) asia-southeast1-b 新加坡（費用略低，約 NT\$680/月）'
 echo "  3) 自訂"
 echo ""
 read -rp "  選擇 [1/2/3，預設 1]: " region_choice
@@ -260,7 +260,7 @@ echo ""
 echo "  curl -fsSL https://raw.githubusercontent.com/Joanna8521/openclaw-install_ecom/main/bootstrap.sh | sudo bash"
 echo ""
 echo "  ── ⚠️  費用提醒 ──────────────────────────────"
-echo "  GCP VM 費用：約 NT$700–900 / 月"
+echo '  GCP VM 費用：約 NT\$700–900 / 月'
 echo "  如不使用時，可在 GCP Console 停止 VM 暫停計費"
 echo "  （停止後不計 CPU/RAM 費用，只計磁碟費用約 NT$30/月）"
 echo ""
