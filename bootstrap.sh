@@ -202,6 +202,10 @@ node "$INSTALL_DIR/openclaw.mjs" config set gateway.port 18789 2>/dev/null || tr
 # Skills 目錄（自媒體班 flat 結構）
 node "$INSTALL_DIR/openclaw.mjs" config set skills.load.extraDirs '["/root/.openclaw/skills"]' 2>/dev/null || true
 
+# Persona systemPrompt（讓所有 Skill 自動帶入學員個人背景）
+PERSONA_PROMPT='你是自媒體班學員的 AI 龍蝦助理。每次對話開始前，請先讀取 /root/.openclaw/workspace/persona.json 的內容（如果存在），根據學員的身份、階段、平台、受眾和目標來客製化你的建議。如果 persona.json 不存在，請建議學員執行 /d01 完成入學診斷。所有回應都要符合學員目前的成長階段（起步期/成長期/轉型期/規模化期）。'
+node "$INSTALL_DIR/openclaw.mjs" config set agents.defaults.systemPrompt "$PERSONA_PROMPT" 2>/dev/null || true
+
 # ── AI 引擎設定（環境變數 + paste-token 雙保險）────────────────────────────
 if [ -n "$AI_KEY" ]; then
   # 1. 寫入 ~/.openclaw/.env（openclaw 自動載入）
@@ -280,6 +284,25 @@ else
     print_err "存取碼錯誤或 repo 不存在，Skills 安裝失敗"
     print_warn "請確認存取碼後重新執行此腳本"
   fi
+fi
+
+# 建立 persona.json 空白模板（D01 診斷後會填入內容）
+mkdir -p /root/.openclaw/workspace
+if [ ! -f /root/.openclaw/workspace/persona.json ]; then
+  cat > /root/.openclaw/workspace/persona.json << 'PERSONA_EOF'
+{
+  "_note": "此檔案由 /d01 入學診斷自動生成，請勿手動修改",
+  "name": "",
+  "stage": "",
+  "platforms": [],
+  "niche": "",
+  "audience": "",
+  "has_course": false,
+  "goal": "",
+  "updated_at": ""
+}
+PERSONA_EOF
+  print_ok "persona.json 模板建立完成"
 fi
 
 # ── STEP 7：Nginx 設定 ───────────────────────────────────────────────────────
