@@ -1,4 +1,5 @@
 #!/bin/bash
+# v2 - fixed dollar signs
 set -euo pipefail
 # =============================================================================
 #  🦞  OpenClaw VM 一鍵建立腳本（GCP 版）
@@ -200,7 +201,7 @@ fi
 section "STEP 6｜建立 VM（e2-medium / Ubuntu 22.04）"
 
 info "建立 VM，約需 30–60 秒..."
-gcloud compute instances create "$VM_NAME" \
+if gcloud compute instances create "$VM_NAME" \
   --project="$PROJECT_ID" \
   --zone="$ZONE" \
   --machine-type="$MACHINE_TYPE" \
@@ -210,9 +211,21 @@ gcloud compute instances create "$VM_NAME" \
   --boot-disk-type="pd-standard" \
   --tags="$FIREWALL_TAG,http-server,https-server" \
   --metadata="enable-oslogin=false" \
-  --no-address=false 2>/dev/null
-
-ok "VM 建立完成！"
+  --no-address=false 2>&1; then
+  ok "VM 建立完成！"
+else
+  warn "VM 建立失敗，嘗試手動建立..."
+  gcloud compute instances create "$VM_NAME" \
+    --project="$PROJECT_ID" \
+    --zone="$ZONE" \
+    --machine-type="$MACHINE_TYPE" \
+    --image-family="$IMAGE_FAMILY" \
+    --image-project="$IMAGE_PROJECT" \
+    --boot-disk-size="$DISK_SIZE" \
+    --boot-disk-type="pd-standard" \
+    --tags="http-server,https-server"
+  ok "VM 建立完成！"
+fi
 
 # ── STEP 7：取得 VM 資訊 ─────────────────────────────────────────────────────
 section "STEP 7｜取得連線資訊"
