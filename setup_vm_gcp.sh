@@ -14,7 +14,7 @@ set -euo pipefail
 #    若選新加坡區（asia-southeast1）約 NT$650–800/月
 #
 #  在 GCP Cloud Shell 執行：
-#    curl -fsSL https://raw.githubusercontent.com/Joanna8521/openclaw-install_ecom/main/setup_vm_gcp.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/Joanna8521/openclaw-install_media/main/setup_vm_gcp.sh | bash
 #
 #  自動完成：
 #    1. 確認 gcloud 設定和專案
@@ -270,7 +270,7 @@ echo "  ssh $VM_NAME.$ZONE.$PROJECT_ID"
 echo ""
 echo "  ── 進入 VM 後，貼上以下指令安裝龍蝦 ────────"
 echo ""
-echo "  curl -fsSL https://raw.githubusercontent.com/Joanna8521/openclaw-install_ecom/main/bootstrap.sh | sudo bash"
+echo "  curl -fsSL https://raw.githubusercontent.com/Joanna8521/openclaw-install_media/main/bootstrap.sh | sudo bash"
 echo ""
 echo "  ── ⚠️  費用提醒 ──────────────────────────────"
 echo '  GCP VM 費用：約 NT\$700–900 / 月'
